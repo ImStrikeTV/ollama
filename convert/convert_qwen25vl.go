@@ -25,6 +25,12 @@ type qwen25vlModel struct {
 	RMSNormEPS            float32 `json:"rms_norm_eps"`
 
 	VisionModel struct {
+		PatchSize uint32 `json:"patch_size"`
+		//HeadDim uint32 `json:"num_heads"`
+		//RopeTheta float32 `json:"rope_theta"`
+		HiddenSize       uint32 `json:"hidden_size"`
+		IntermediateSize uint32 `json:"intermediate_size"`
+		WindowSize       uint32 `json:"window_size"`
 	} `json:"vision_config"`
 }
 
@@ -41,6 +47,8 @@ func (q *qwen25vlModel) KV(t *Tokenizer) ggml.KV {
 	kv["qwen25vl.attention.head_count_kv"] = q.NumKeyValueHeads
 	kv["qwen25vl.rope.freq_base"] = q.RopeTheta
 	kv["qwen25vl.attention.layer_norm_rms_epsilon"] = q.RMSNormEPS
+
+	kv["qwen25vl.vision.embedding_length"] = q.VisionModel.HiddenSize
 
 	return kv
 }
@@ -139,10 +147,10 @@ func splitPatchEmbed(buf bytes.Buffer, kind uint32, shape []uint64) []ggml.Tenso
 
 		slog.Debug("first vals", "val 1", ts[0][0], "val 2", ts[0][1], "val 3", ts[0][2])
 
-		f16s := make(patchEmbed, shapeToSize(shape))
-		for r, row := range ts {
-			for c, col := range row {
-				f16s[r+c] = float16.Fromfloat32(col).Bits()
+		var f16s patchEmbed
+		for _, row := range ts {
+			for _, col := range row {
+				f16s = append(f16s, float16.Fromfloat32(col).Bits())
 			}
 		}
 
@@ -151,7 +159,7 @@ func splitPatchEmbed(buf bytes.Buffer, kind uint32, shape []uint64) []ggml.Tenso
 
 	p := getDataFromSlice(f32s, intShape, []tensor.Slice{nil, nil, tensor.S(0, 1, 1), nil, nil})
 	newTensors = append(newTensors, ggml.Tensor{
-		Name:     "v.patch_embed.weight",
+		Name:     "v.patch_embed.0.weight",
 		Kind:     kind,
 		Shape:    append(shape[:2], shape[3:]...),
 		WriterTo: p,
@@ -159,7 +167,7 @@ func splitPatchEmbed(buf bytes.Buffer, kind uint32, shape []uint64) []ggml.Tenso
 
 	p = getDataFromSlice(f32s, intShape, []tensor.Slice{nil, nil, tensor.S(1, 2, 1), nil, nil})
 	newTensors = append(newTensors, ggml.Tensor{
-		Name:     "v.patch_embed.weight.1",
+		Name:     "v.patch_embed.1.weight",
 		Kind:     kind,
 		Shape:    append(shape[:2], shape[3:]...),
 		WriterTo: p,
