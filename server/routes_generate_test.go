@@ -372,17 +372,17 @@ func TestGenerateChat(t *testing.T) {
 						Type       string   `json:"type"`
 						Required   []string `json:"required"`
 						Properties map[string]struct {
-							Type        string   `json:"type"`
-							Description string   `json:"description"`
-							Enum        []string `json:"enum,omitempty"`
+							Type        string `json:"type"`
+							Description string `json:"description"`
+							Enum        []any  `json:"enum,omitempty"`
 						} `json:"properties"`
 					}{
 						Type:     "object",
 						Required: []string{"location"},
 						Properties: map[string]struct {
-							Type        string   `json:"type"`
-							Description string   `json:"description"`
-							Enum        []string `json:"enum,omitempty"`
+							Type        string `json:"type"`
+							Description string `json:"description"`
+							Enum        []any  `json:"enum,omitempty"`
 						}{
 							"location": {
 								Type:        "string",
@@ -390,7 +390,7 @@ func TestGenerateChat(t *testing.T) {
 							},
 							"unit": {
 								Type: "string",
-								Enum: []string{"celsius", "fahrenheit"},
+								Enum: []any{"celsius", "fahrenheit"},
 							},
 						},
 					},
@@ -469,17 +469,17 @@ func TestGenerateChat(t *testing.T) {
 						Type       string   `json:"type"`
 						Required   []string `json:"required"`
 						Properties map[string]struct {
-							Type        string   `json:"type"`
-							Description string   `json:"description"`
-							Enum        []string `json:"enum,omitempty"`
+							Type        string `json:"type"`
+							Description string `json:"description"`
+							Enum        []any  `json:"enum,omitempty"`
 						} `json:"properties"`
 					}{
 						Type:     "object",
 						Required: []string{"location"},
 						Properties: map[string]struct {
-							Type        string   `json:"type"`
-							Description string   `json:"description"`
-							Enum        []string `json:"enum,omitempty"`
+							Type        string `json:"type"`
+							Description string `json:"description"`
+							Enum        []any  `json:"enum,omitempty"`
 						}{
 							"location": {
 								Type:        "string",
@@ -487,7 +487,7 @@ func TestGenerateChat(t *testing.T) {
 							},
 							"unit": {
 								Type: "string",
-								Enum: []string{"celsius", "fahrenheit"},
+								Enum: []any{"celsius", "fahrenheit"},
 							},
 						},
 					},
